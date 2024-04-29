@@ -1,0 +1,62 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<main>
+    <section class="container">
+        <h1>{{ title }}</h1>  
+    </section>
+
+    <section class="container">
+        {% if request.user.is_authenticated %}
+            <span> Usuario Autenticado {{ user }}</span>
+        {% endif %}
+
+        {% for i in product %}
+                <div>
+                    <span>
+                        {{ i.Owner }}
+                    </span>
+                </div>
+                <div>
+                    <img src="https://res.cloudinary.com/den3ccjvd/image/upload/v1/{{ i.Img }}" alt="{{ product.Title }}">
+
+                </div>
+
+                <div>
+                    <span>
+                        {{ i.Description }}
+                    </span>
+                </div>
+
+                <div>
+                    <span>Initial Price {{ i.Price }}</span>
+                </div>
+
+                <div>
+                    <span>Actual Price {{ i.Final_Price }}</span>
+                </div>
+
+                <div>
+                    {% if i.Active == True %}
+                        <span>Its active</span>
+                    {% else %}
+                        <span>Its not active</span>
+                    {% endif%}
+                </div>
+
+                <div>
+                    <span>
+                        {{ i.Category}}
+                    </span>
+                </div>
+       
+                    {% endfor %}
+
+    </section>
+
+    
+</main>
+    
+
+{% endblock %}
