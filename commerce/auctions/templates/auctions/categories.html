@@ -1,0 +1,17 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+    <div class="container mt-5">
+ 
+        <ul class="list-group custom-list">
+            {% for categorie in categories %}
+                    <li class="list-group-item btn btn-outline-info mb-1">
+                        <a href="{% url 'category' categorie.id %}" class="text-decoration-none text-secondary categorie">{{ categorie.Category }}</a>  
+                    </li>
+                {% endfor %}
+        </ul>
+    </div>
+
+       
+{% endblock %}

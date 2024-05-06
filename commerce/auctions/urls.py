@@ -11,5 +11,11 @@ urlpatterns = [
     path("product/<int:id>/",views.show_product, name ="product"),
     path("watchlist/",views.watchlist, name ="watchlist"),
     path("add_watchlist/<int:id>/",views.add_watchlist, name ="add_watchlist"),
+    path("remove_watchlist/<int:id>/",views.remove_watchlist, name ="remove_watchlist"),
+    path("categories",views.categories, name ="categories"),
+    path("category/<int:id>",views.category, name ="category"),
+
+    path("add_new_deals/<int:id>", views.add_newpricefor_product, name="deals"),
+    path("finish/Offer/<int:id>/",views.finishOffer, name="offerclose")
 
 ]

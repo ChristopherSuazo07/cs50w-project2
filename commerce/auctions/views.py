@@ -8,6 +8,7 @@ from .models import *
 from .models import Products
 from .forms import *
 import random
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
@@ -17,10 +18,11 @@ def index(request):
     categories = Categories.objects.all()
     # i = list(products.order_by('?'[:3]))
    
-    
-    return render(request, "auctions/index.html",{
+    context = {
         'products': products,
-        'categories': Categories.objects.all()})
+        'categories': Categories.objects.all()
+    }
+    return render(request, "auctions/index.html",context)
 
    
 
@@ -83,10 +85,17 @@ def add_product(request):
        print(f'===================> {form}')
        
        if form.is_valid():
+            bid = form.cleaned_data['bid']
             new_product = form.save(commit = False) #crea un obj nuevo, sin guardar aun los datos del formulario en la db
             
             new_product.Owner = request.user
+            print("===> value", bid)
+            # Add Deals
+            bids = Deals(price = bid, user=request.user)
+            bids.save()
             
+            new_product.price_new_owner = bids
+            new_product.initial_price = bid
             new_product.save()
            
             return render(request, "auctions/add_product.html",{
@@ -103,26 +112,29 @@ def add_product(request):
 def show_product(request, id):
     products = Products.objects.filter(id = id)
     comments = Comments.objects.filter(Product = id)
-  
+    
+    print(f'=================>{id}')
     if request.method == 'GET':
         form = AddComment()
+
+        watchlist_bool = WatchList.objects.filter(Person=request.user, Product=Products.objects.get(pk=id)).exists()
+  
+
         context = {
             'products': products,
             'comments': comments,
-            'form':form
+            'form':form,
+            'watchlist_bool': watchlist_bool
         }
         return render(request, "auctions/product.html", context)
     else:
-        
         
         form = AddComment(request.POST)
         
         if form.is_valid():
             new_comment = form.save(commit = False) #crea un obj nuevo, sin guardar aun los datos del formulario en la db
-            
             new_comment.Author = request.user
-            new_comment.Product = id
-            
+            new_comment.Product = Products.objects.get(pk=id)
             new_comment.save()
             
             context = {
@@ -130,7 +142,7 @@ def show_product(request, id):
                 'products': products,
                 'comments': comments
                 }
-            return render(request, "auctions/add_product.html",context)  
+            return redirect('product', id)
     
   
 @login_required(login_url="register")
@@ -145,10 +157,58 @@ def watchlist(request):
     return render(request, 'auctions/watchlist.html', context)
     
 def add_watchlist(request, id):
-    
-    product = Products.objects.get(id = id) #Select con where id = id
+    product = Products.objects.get(id = id) #Select con where id = id 
     watchlist = WatchList(Product= product, Person = request.user)
     watchlist.save()
-    
     print(f"=================>id:{id}<==================")
-    return redirect("watchlist")
+    return redirect('product', id)
+
+def remove_watchlist(request, id):
+    
+    removed=WatchList.objects.filter(Product = id)
+    print(f'=====================>{removed}')
+    removed.delete()
+    
+    return redirect('product', id)
+
+def add_newpricefor_product(request, id):
+    price_new = request.POST.get('offer')
+    print("price === > ", price_new)
+    product = Products.objects.get(pk=id)
+    if float(price_new) > product.price_new_owner.price:
+        deal_new = Deals(user=request.user, price=float(price_new))
+        deal_new.save()
+        product.price_new_owner = deal_new
+        product.save()
+    else:
+        messages.error(request, "The bid has to be higher than the current one")
+    return redirect('product', id)
+
+def finishOffer(request,id):
+    print("===> Close", id)
+    product = Products.objects.get(pk=id)
+    product.Active = False
+    product.save()
+    return redirect('product', id)
+
+def categories(request):
+    categories = Categories.objects.all()
+    context = {
+        'categories': categories
+    }
+    return render(request, 'auctions/categories.html', context)
+
+def category(request, id):
+    
+    cat = Categories.objects.get(id=id)
+    
+    products = Products.objects.filter(Category = cat)
+    
+    products_bool = products.exists()
+    
+    print(f'=================>{products_bool}\n==================>{products}')
+    context ={
+        'products': products,
+        'products_bool':products_bool
+    }
+    return render(request, 'auctions/category.html', context)

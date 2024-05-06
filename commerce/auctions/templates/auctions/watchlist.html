@@ -3,9 +3,35 @@
 {% block body %}
 
 {% load widget_tweaks %}
-
-    {% for product in watchlist %}
-        {{ product.Title}}
-    {% endfor %}
-
+    <div class="d-flex justify-content-center container-fluid flex-wrap mt-5"> 
+        {% for product in watchlist %}
+            <div class="h-100 d-flex justify-content-center container-fluid"></div>
+                <div class="card my-2 ms-5 d-flex  justify-content-center" style="width: 50%">
+                            <div class="row g-0">
+                            <div class="col-md-4">
+                                <a href="{% url 'product' product.Product.id %}">
+                                    <img src="https://res.cloudinary.com/den3ccjvd/image/upload/v1/{{ product.Product.Img }}" class="img-fluid rounded-start" alt="...">
+                                </a>
+                                </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center mb-3">{{ product.Product.Title }}</h5>
+                                    <p class="card-text text-center">{{ product.Product.Description }}</p>
+                                    <p class="card-text"><small class="text-body-secondary">Initial Price: {{ product.Product.initial_price}}$</small></p>
+                                    <p class="card-text"><small class="text-body-secondary">Actual Price: {{ product.Product.price_new_owner.price  }}$</small></p>
+                                </div>
+            
+                                <div class="card-body">
+                                    {% if request.user.is_authenticated %}
+                                        <div class="d-flex justify-content-start mb-3">
+                                            <a href="{% url 'remove_watchlist' product.Product.id %}" class="btn btn-outline-info">Remove to my WatchList</a>         
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+            </div>
+        {% endfor %}
+    </div>                    
 {% endblock %}
+

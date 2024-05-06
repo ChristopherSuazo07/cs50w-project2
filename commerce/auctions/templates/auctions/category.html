@@ -1,0 +1,45 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+    {% if products_bool%}
+        <div class="container">
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mt-3">
+                    <div class="wsk-cp-product position-relative">
+                        <div class="wsk-cp-img position-absolute mt-2 p-5">
+                            <a href="{% url 'product' id=product.id %}">
+                                <img src="https://res.cloudinary.com/den3ccjvd/image/upload/v1/{{ product.Img }}"
+                                    alt="{{ product.Title }}" class="img-responsive" />
+                            </a>
+                        </div>
+                        <div class="wsk-cp-text">
+                            <div class="category text-center p-3 mb-5 position-relative">
+                                <a style="text-decoration: none;" href="{% url 'product' id=product.id %}">offer</a>
+                            </div>
+                            <div class="title-product">
+                                <h3>{{ product.Title }}</h3>
+                            </div>
+                            <div class="description-prod">
+                                <p>{{ product.Description }}</p>
+                            </div>
+                            <div class="card-footer d-flex justify-content-center">
+                                <div class="wcf-left"><span class="price">{{ product.price_new_owner.price }} $</span></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="container d-flex justify-content-center" style="margin-top: 20%;">
+            <span>This category doesn't have associated products yet. <a href="/">Go Home</a></span>
+        </div>
+    {% endif %}
+        
+
+       
+{% endblock %}
