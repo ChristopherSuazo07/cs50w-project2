@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% load widget_tweaks %}
+
+    {% for product in watchlist %}
+        {{ product.Title}}
+    {% endfor %}
+
+{% endblock %}

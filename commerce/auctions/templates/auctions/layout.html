@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
     <head>
         <title>{% block title %}Auctions{% endblock %}</title>
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
@@ -9,6 +9,12 @@
         
     </head>
     <body>
+      <style>
+        body {
+          font-family: 'Muli', sans-serif;
+          background: #ddd;
+        }
+      </style>
         <header>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
@@ -37,11 +43,17 @@
                   {% endif %}
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" aria-disabled="true" href="{% url 'register' %}">{{ user.username }}</a>
+                            <a class="nav-link" aria-disabled="true" href="" >{{ user.username }}</a>
                         </li>
+                        <li class="nav-item">
+                          <a class="nav-link" aria-disabled="true" href="{% url 'watchlist' %}" >WatchList</a>
+                      </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link " aria-disabled="true" href="{% url 'register' %}">Not signed</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" aria-disabled="true" href="{% url 'register' %}" >WatchList</a>
                         </li>
                     {% endif %}
 
