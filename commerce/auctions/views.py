@@ -117,16 +117,26 @@ def show_product(request, id):
     if request.method == 'GET':
         form = AddComment()
 
-        watchlist_bool = WatchList.objects.filter(Person=request.user, Product=Products.objects.get(pk=id)).exists()
-  
-
-        context = {
-            'products': products,
-            'comments': comments,
-            'form':form,
-            'watchlist_bool': watchlist_bool
-        }
-        return render(request, "auctions/product.html", context)
+        Users = request.user
+        if Users.is_authenticated:
+            watchlist_bool = WatchList.objects.filter(Person=Users, Product=Products.objects.get(pk=id)).exists()
+        
+            context = {
+                'products': products,
+                'comments': comments,
+                'form':form,
+                'watchlist_bool': watchlist_bool
+            }
+            return render(request, "auctions/product.html", context)
+        
+        else:
+            context = {
+                'products': products,
+                'comments': comments,
+                'form':form,
+                'watchlist_bool': False
+            }
+            return render(request, "auctions/product.html", context)
     else:
         
         form = AddComment(request.POST)
